@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from tensorflow.keras import layers
 import numpy as np
 
-data_path = "D:/dev/AI/bewertung_nach_reflexen"
+data_path = "D:/dev/AI/pngs_labeled"
 
-image_size = (300,300)
+image_size = (396, 396)
 butch_size = 32
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
@@ -13,7 +13,7 @@ train_ds = tf.keras.preprocessing.image_dataset_from_directory(
     validation_split=0.2,
     subset="training",
     labels='inferred',
-    color_mode="rgb",
+    color_mode="grayscale",
     batch_size=butch_size,
     image_size=image_size,
     shuffle=True,
@@ -24,7 +24,7 @@ val_ds = tf.keras.preprocessing.image_dataset_from_directory(
     validation_split=0.2,
     subset="validation",
     labels='inferred',
-    color_mode="rgb",
+    color_mode="grayscale",
     batch_size=butch_size,
     image_size=image_size,
     shuffle=True,
@@ -62,15 +62,14 @@ data_augmentation = tf.keras.Sequential(
 )
 
 model = tf.keras.Sequential([
-    data_augmentation,
-    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(image_size[0], image_size[1], 3)),
-    layers.Conv2D(16, 3, activation="relu"),
+    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(image_size[0], image_size[1], 1)),
+    layers.Conv2D(16, 1, activation="relu"),
     layers.MaxPooling2D(),
-    layers.Conv2D(32, 3, activation="relu"),
+    layers.Conv2D(32, 1, activation="relu"),
     layers.MaxPooling2D(),
-    layers.Conv2D(64, 3, activation="relu"),
+    layers.Conv2D(64, 1, activation="relu"),
     layers.MaxPooling2D(),
-    layers.Conv2D(92, 3, activation="relu"),
+    layers.Conv2D(92, 1, activation="relu"),
     layers.MaxPooling2D(),
     layers.Dropout(0.2),
     layers.Flatten(),
@@ -86,7 +85,7 @@ model.compile(
     metrics=["accuracy"]
 )
 
-epochs = 10
+epochs = 20
 history = model.fit(
     train_ds,
     validation_data=val_ds,
@@ -116,7 +115,7 @@ plt.title('Training and Validation Loss')
 plt.show()
 
 img = tf.keras.preprocessing.image.load_img(
-    "D:/dev/AI/bewertung_nach_reflexen/117_Vignettierung_2_157.png", target_size=image_size
+    "D:/dev/AI/pngs_labeled/213_Bildhomogenitaet_LED_Leuchfeld_3_894.png", target_size=None, color_mode="grayscale"
 )
 img_array = tf.keras.preprocessing.image.img_to_array(img)
 img_array = tf.expand_dims(img_array, 0)
